@@ -1,0 +1,64 @@
+import { ChevronDown, Disc3, Heart, ListMusic, Mic2, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward, Volume1, Volume2, VolumeX, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router-dom";
+import { FastAverageColor } from "fast-average-color";
+import { repository } from "../../repositories/localRepository";
+import { currentTrack, usePlayer } from "../../store/player";
+import { useDatabaseVersion } from "../../store/session";
+import { CoverArt } from "../../components/CoverArt";
+import { AudioEngine } from "./AudioEngine";
+
+const formatTime = (value: number) => `${Math.floor(value / 60)}:${String(Math.floor(value % 60)).padStart(2, "0")}`;
+
+export function Player() {
+  const { t } = useTranslation(); const navigate = useNavigate(); useDatabaseVersion(); const player = usePlayer(); const seekRef = useRef<HTMLInputElement>(null);
+  const tracks = repository.tracks(); const track = currentTrack(tracks, player.trackIds, player.currentIndex); const [lastVolume, setLastVolume] = useState(0.75); const [coverAccent, setCoverAccent] = useState("#b6f13c"); const accent = track?.coverUrl ? coverAccent : "#b6f13c";
+  const queueTracks = useMemo(() => player.trackIds.map((id) => tracks.find((item) => item.id === id)).filter(Boolean), [player.trackIds, tracks]);
+
+  useEffect(() => {
+    if (!track?.coverUrl) return;
+    const fac = new FastAverageColor(); fac.getColorAsync(track.coverUrl, { algorithm: "dominant" }).then((color) => setCoverAccent(color.hex)).catch(() => setCoverAccent("#b6f13c"));
+    return () => fac.destroy();
+  }, [track?.coverUrl]);
+  useEffect(() => { if (!player.toast) return; const timer = setTimeout(player.clearToast, 2400); return () => clearTimeout(timer); }, [player.toast, player.clearToast]);
+
+  const seek = (value: number) => {
+    const audio = document.querySelector("audio"); if (audio) audio.currentTime = value; player.setProgress(value);
+  };
+  const previous = () => { if (player.position > 3) seek(0); else player.previous(); };
+  const toggleMute = () => { if (player.volume > 0) { setLastVolume(player.volume); player.setVolume(0); } else player.setVolume(lastVolume || .75); };
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      const tag = (event.target as HTMLElement).tagName; if (["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
+      if (event.code === "Space") { event.preventDefault(); player.togglePlay(); }
+      else if (event.key.toLowerCase() === "n") player.next();
+      else if (event.key.toLowerCase() === "p") previous();
+      else if (event.key.toLowerCase() === "q") player.setQueueOpen(!player.queueOpen);
+      else if (event.key.toLowerCase() === "m") toggleMute();
+      else if (event.key.toLowerCase() === "l" && track) repository.like(track.id);
+      else if (event.key === "?") navigate("/shortcuts");
+    };
+    addEventListener("keydown", handler); return () => removeEventListener("keydown", handler);
+  });
+
+  return <>
+    <AudioEngine />
+    {track && <div className="mobile-mini-player" style={{ "--player-accent": accent } as React.CSSProperties} onClick={() => player.setMobileExpanded(true)}>
+      <CoverArt src={track.coverUrl} alt="" /><div><strong>{track.title}</strong><span>{track.artists[0].stageName}</span></div><button className="icon-button" onClick={(event) => { event.stopPropagation(); player.togglePlay(); }} aria-label={t(player.isPlaying ? "pause" : "play")}>{player.isPlaying ? <Pause fill="currentColor" /> : <Play fill="currentColor" />}</button>
+      <div className="mini-progress" style={{ width: `${player.duration ? player.position / player.duration * 100 : 0}%` }} />
+    </div>}
+    <footer className={`desktop-player ${track ? "has-track" : ""}`} style={{ "--player-accent": accent } as React.CSSProperties}>
+      <div className="player-track">{track ? <><CoverArt src={track.coverUrl} alt="" /><div><strong>{track.title}</strong><Link to={`/artist/${track.artists[0].username}`}>{track.artists[0].stageName}</Link></div><button className={`icon-button ${track.isLiked ? "active" : ""}`} onClick={() => repository.like(track.id)} aria-label={t(track.isLiked ? "unlike" : "like")}><Heart fill={track.isLiked ? "currentColor" : "none"} /></button></> : <><span className="empty-cover"><Disc3 /></span><div><strong>{t("queueEmpty")}</strong><span>{t("queueEmptyBody")}</span></div></>}</div>
+      <div className="player-center"><div className="player-buttons"><button className={`icon-button ${player.shuffleEnabled ? "active" : ""}`} onClick={player.toggleShuffle} aria-label={t("shuffle")}><Shuffle /></button><button className="icon-button" onClick={previous} aria-label={t("previous")}><SkipBack fill="currentColor" /></button><button className="main-play" onClick={player.togglePlay} disabled={!track} aria-label={t(player.isPlaying ? "pause" : "play")}>{player.isPlaying ? <Pause fill="currentColor" /> : <Play fill="currentColor" />}</button><button className="icon-button" onClick={() => player.next()} aria-label={t("next")}><SkipForward fill="currentColor" /></button><button className={`icon-button ${player.repeatMode !== "off" ? "active" : ""}`} onClick={player.cycleRepeat} aria-label={t(player.repeatMode === "off" ? "repeatOff" : player.repeatMode === "all" ? "repeatAll" : "repeatOne")}>{player.repeatMode === "one" ? <Repeat1 /> : <Repeat />}</button></div><div className="progress-row"><span>{formatTime(player.position)}</span><input ref={seekRef} type="range" min="0" max={player.duration || 1} step=".1" value={Math.min(player.position, player.duration || 1)} onChange={(e) => seek(Number(e.target.value))} aria-label={t("seek")} /><span>{formatTime(player.duration)}</span></div></div>
+      <div className="player-actions"><button className="icon-button" onClick={() => player.setLyricsOpen(true)} disabled={!track} aria-label={t("lyrics")}><Mic2 /></button><button className={`icon-button ${player.queueOpen ? "active" : ""}`} onClick={() => player.setQueueOpen(!player.queueOpen)} aria-label={t("queue")}><ListMusic /></button><button className="icon-button" onClick={toggleMute} aria-label={t("volume")}>{player.volume === 0 ? <VolumeX /> : player.volume < .5 ? <Volume1 /> : <Volume2 />}</button><input className="volume-slider" type="range" min="0" max="1" step=".01" value={player.volume} onChange={(e) => player.setVolume(Number(e.target.value))} aria-label={t("volume")} /></div>
+    </footer>
+    {player.queueOpen && <aside className="queue-drawer" aria-label={t("queue")}><div className="drawer-heading"><div><span className="eyebrow">{t("nowPlaying")}</span><h2>{t("queue")}</h2></div><button className="icon-button" onClick={() => player.setQueueOpen(false)} aria-label={t("close")}><X /></button></div>{queueTracks.length ? <div className="queue-list">{queueTracks.map((item, index) => item && <div className={`queue-item ${index === player.currentIndex ? "current" : ""}`} key={`${item.id}-${index}`} draggable={index !== player.currentIndex} onDragStart={(e) => e.dataTransfer.setData("text/plain", String(index))} onDragOver={(e) => e.preventDefault()} onDrop={(e) => player.reorder(Number(e.dataTransfer.getData("text/plain")), index)}><span className="drag-grip">⠿</span><CoverArt src={item.coverUrl} alt="" /><button onClick={() => player.replaceContext(queueTracks as typeof tracks, item.id)}><strong>{item.title}</strong><span>{item.artists[0].stageName}</span></button>{index !== player.currentIndex && <button className="icon-button" onClick={() => player.remove(index)} aria-label={t("removeQueue")}><X /></button>}</div>)}</div> : <p className="muted">{t("queueEmptyBody")}</p>}</aside>}
+    {player.mobileExpanded && track && <div className="mobile-full-player" style={{ "--player-accent": accent } as React.CSSProperties}><button className="icon-button collapse-player" onClick={() => player.setMobileExpanded(false)} aria-label={t("close")}><ChevronDown /></button><span className="eyebrow">{t("nowPlaying")}</span><CoverArt src={track.coverUrl} alt={track.title} className="full-cover" /><div className="full-track-copy"><div><h2>{track.title}</h2><Link to={`/artist/${track.artists[0].username}`}>{track.artists[0].stageName}</Link></div><button className={`icon-button ${track.isLiked ? "active" : ""}`} onClick={() => repository.like(track.id)}><Heart fill={track.isLiked ? "currentColor" : "none"} /></button></div><div className="progress-row"><span>{formatTime(player.position)}</span><input type="range" min="0" max={player.duration || 1} step=".1" value={Math.min(player.position, player.duration || 1)} onChange={(e) => seek(Number(e.target.value))} /><span>{formatTime(player.duration)}</span></div><div className="full-controls"><button className={`icon-button ${player.shuffleEnabled ? "active" : ""}`} onClick={player.toggleShuffle}><Shuffle /></button><button className="icon-button" onClick={previous}><SkipBack fill="currentColor" /></button><button className="main-play" onClick={player.togglePlay}>{player.isPlaying ? <Pause fill="currentColor" /> : <Play fill="currentColor" />}</button><button className="icon-button" onClick={() => player.next()}><SkipForward fill="currentColor" /></button><button className={`icon-button ${player.repeatMode !== "off" ? "active" : ""}`} onClick={player.cycleRepeat}>{player.repeatMode === "one" ? <Repeat1 /> : <Repeat />}</button></div><div className="full-secondary"><button onClick={() => player.setLyricsOpen(true)}><Mic2 />{t("lyrics")}</button><button onClick={() => { player.setMobileExpanded(false); player.setQueueOpen(true); }}><ListMusic />{t("queue")}</button></div></div>}
+    {player.lyricsOpen && track && <div className="lyrics-overlay"><div className="lyrics-top"><div><span className="eyebrow">{t("focusMode")}</span><h2>{track.title}</h2><span>{track.artists[0].stageName}</span></div><button className="icon-button" onClick={() => player.setLyricsOpen(false)} aria-label={t("close")}><X /></button></div><div className="lyrics-body">{track.lyrics ? track.lyrics.split("\n").map((line) => <p key={line}>{line}</p>) : <p className="muted">{t("lyricsUnavailable")}</p>}</div></div>}
+    {player.gestureRequired && <button className="gesture-toast" onClick={player.togglePlay}>{t("gestureRequired")} <Play /></button>}
+    {player.failureCount >= 3 && <div className="toast error" role="alert">{t("playerError")}</div>}
+    {player.toast && <div className="toast" role="status">{t(player.toast)}</div>}
+  </>;
+}

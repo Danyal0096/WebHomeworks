@@ -1,0 +1,12 @@
+{
+  "name": "Sonora Music",
+  "short_name": "Sonora",
+  "description": "Your music, in motion.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090b0a",
+  "theme_color": "#b6f13c",
+  "icons": [
+    { "src": "/icons/sonora.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

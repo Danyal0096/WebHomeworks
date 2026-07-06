@@ -1,0 +1,8 @@
+# Sonora planning / Codex handoff documents
+/AGENTS.md
+/docs/*.md
+/docs/*.txt
+/MANIFEST.txt
+
+# Original handoff archive
+/sonora_md_package.zip

@@ -8,3 +8,4 @@ htmlcov/
 .env
 media/
 db.sqlite3
+/AGENTS.md

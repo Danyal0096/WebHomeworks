@@ -49,15 +49,19 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   gestureRequired: false, toast: null, failureCount: 0, unavailableIds: [],
   replaceContext: (tracks, selectedId) => set(() => {
     const playableIds = tracks.map((track) => track.id);
+    const selected = tracks.find((track) => track.id === selectedId);
+    if (!selected?.isPlayableForViewer) return { isPlaying: false, toast: selected?.lockReason === "gold_required" ? "goldRequired" : selected?.lockReason === "explicit_restricted" ? "explicitRestricted" : selected?.lockReason === "daily_stream_limit" ? "dailyLimit" : "cannotQueueLocked" };
     const next = { trackIds: playableIds, currentIndex: Math.max(0, playableIds.indexOf(selectedId)), repeatMode: get().repeatMode, shuffleEnabled: get().shuffleEnabled, volume: get().volume };
     persist(next); repository.recordRecentlyPlayed(selectedId);
     return { ...next, isPlaying: true, position: 0, gestureRequired: false, toast: "queueReplaced" };
   }),
   addNext: (trackId) => set((state) => {
+    const candidate = repository.tracks().find((track) => track.id === trackId);
+    if (candidate && !candidate.isPlayableForViewer) return { toast: "cannotQueueLocked" };
     const trackIds = [...state.trackIds]; trackIds.splice(Math.max(0, state.currentIndex + 1), 0, trackId);
     persist({ ...state, trackIds }); return { trackIds, toast: "playingNext" };
   }),
-  addToQueue: (trackId) => set((state) => { const trackIds = [...state.trackIds, trackId]; persist({ ...state, trackIds }); return { trackIds, toast: "addedQueue" }; }),
+  addToQueue: (trackId) => set((state) => { const candidate = repository.tracks().find((track) => track.id === trackId); if (candidate && !candidate.isPlayableForViewer) return { toast: "cannotQueueLocked" }; const trackIds = [...state.trackIds, trackId]; persist({ ...state, trackIds }); return { trackIds, toast: "addedQueue" }; }),
   remove: (index) => set((state) => {
     if (index === state.currentIndex) return state;
     const trackIds = state.trackIds.filter((_, i) => i !== index); const currentIndex = index < state.currentIndex ? state.currentIndex - 1 : state.currentIndex;

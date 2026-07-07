@@ -126,6 +126,9 @@ export interface Notification {
   userId: string;
   title: string;
   body: string;
+  titleKey?: string;
+  bodyKey?: string;
+  values?: Record<string, string | number>;
   kind: "critical" | "important" | "social" | "release";
   readAt: string | null;
   createdAt: string;

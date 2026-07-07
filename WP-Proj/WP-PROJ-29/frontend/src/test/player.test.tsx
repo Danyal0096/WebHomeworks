@@ -20,6 +20,15 @@ describe("queue and player behavior", () => {
     const playlist = repository.playlist("playlist-1")!; const tracks = repository.tracks().filter((track) => playlist.trackIds.includes(track.id)); act(() => { usePlayer.getState().replaceContext(tracks, tracks[0].id); usePlayer.getState().addToQueue("track-12"); }); expect(usePlayer.getState().trackIds).toContain("track-12"); expect(repository.playlist("playlist-1")!.trackIds).not.toContain("track-12");
   });
 
+  it("does not add locked tracks with Add next or Add to queue", () => {
+    repository.logout(); repository.login("listener.basic@sonora.demo", DEMO_PASSWORD);
+    const locked = repository.tracks().find((track) => track.id === "track-12")!;
+    expect(locked.isPlayableForViewer).toBe(false);
+    act(() => { usePlayer.getState().addNext(locked.id); usePlayer.getState().addToQueue(locked.id); });
+    expect(usePlayer.getState().trackIds).not.toContain(locked.id);
+    expect(usePlayer.getState().toast).toBe("cannotQueueLocked");
+  });
+
   it("cycles repeat modes and toggles shuffle", () => {
     act(() => usePlayer.getState().cycleRepeat()); expect(usePlayer.getState().repeatMode).toBe("all"); act(() => usePlayer.getState().cycleRepeat()); expect(usePlayer.getState().repeatMode).toBe("one"); act(() => usePlayer.getState().toggleShuffle()); expect(usePlayer.getState().shuffleEnabled).toBe(true);
   });

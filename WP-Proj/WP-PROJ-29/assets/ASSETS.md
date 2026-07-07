@@ -5,9 +5,10 @@ All runtime media is bundled locally. Sonora does not load music, cover art, or 
 ## Audio
 
 - `frontend/public/media/audio/sonora-1.wav` through `sonora-12.wav`
-- Source: procedurally synthesized for this repository on 2026-07-06 using an original additive-synthesis script (sine/triangle tones, envelopes, and deterministic note patterns).
+- Source: procedurally synthesized for this repository on 2026-07-07 using an original additive-synthesis script (layered sine tones, bass pulse, envelopes, and deterministic note patterns). The files were regenerated during the audit because the first pass was too quiet in owner testing.
 - Rights: original generated demo material; dedicated to this Sonora project by its generator. No samples, performances, melodies, or third-party recordings were used.
-- Format: mono PCM WAV, 8 kHz, 16-bit. Durations match the seeded catalog metadata.
+- Format: mono PCM WAV, 22.05 kHz, 16-bit. Total audio size is 25,799,028 bytes. Durations match the seeded catalog metadata.
+- Sanity check: `frontend/src/test/audio-assets.test.ts` validates RIFF/WAVE headers, 22.05 kHz sample rate, 16-bit PCM, seeded durations, peak amplitude above 0.35, and RMS amplitude above 0.08 for all twelve files.
 
 ## Covers and avatars
 

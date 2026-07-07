@@ -1,5 +1,5 @@
 import { Bell, CircleHelp, Headphones, Home, Library, Menu, Search, Settings, ShieldCheck, SlidersHorizontal, Sparkles, TicketCheck, UserRound, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 import { Logo } from "../components/Logo";
@@ -11,11 +11,13 @@ import { useDatabaseVersion, useSession } from "../store/session";
 const NavItem = ({ to, icon: Icon, label, badge }: { to: string; icon: typeof Home; label: string; badge?: number }) => <NavLink to={to} end={to === "/"} className={({ isActive }) => isActive ? "active" : ""}><Icon /><span>{label}</span>{Boolean(badge) && <b className="nav-badge">{badge}</b>}</NavLink>;
 
 export function AppShell() {
-  const { t } = useTranslation(); const user = useSession()!; useDatabaseVersion(); const [moreOpen, setMoreOpen] = useState(false);
+  const { t, i18n } = useTranslation(); const user = useSession()!; useDatabaseVersion(); const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => { if (i18n.language !== user.locale) void i18n.changeLanguage(user.locale); }, [i18n, user.locale]);
+  useEffect(() => { document.documentElement.dataset.theme = user.theme; }, [user.theme]);
   const unread = repository.notifications().filter((notice) => !notice.readAt).length;
   const isArtist = Boolean(user.artistProfile); const isStaff = user.kind === "support" || user.kind === "admin";
   return <div className="app-shell">
-    <aside className="sidebar"><Logo />{!isStaff && <nav aria-label="Primary"><NavItem to="/" icon={Home} label={t("home")} /><NavItem to="/search" icon={Search} label={t("search")} /><NavItem to="/library" icon={Library} label={t("library")} /><NavItem to="/notifications" icon={Bell} label={t("notifications")} badge={unread} /></nav>}
+    <aside className="sidebar"><Logo />{!isStaff && <nav aria-label={t("primaryNavigation")}><NavItem to="/" icon={Home} label={t("home")} /><NavItem to="/search" icon={Search} label={t("search")} /><NavItem to="/library" icon={Library} label={t("library")} /><NavItem to="/notifications" icon={Bell} label={t("notifications")} badge={unread} /></nav>}
       {(isArtist || isStaff) && <><span className="nav-label">{isArtist ? t("artist") : t("supportRole")}</span><nav>{isArtist && <NavItem to="/studio" icon={Sparkles} label={t("studio")} />}{isStaff && <NavItem to="/support" icon={Headphones} label={t("support")} />}{user.kind === "admin" && <NavItem to="/admin" icon={ShieldCheck} label={t("admin")} />}</nav></>}
       <div className="sidebar-foot">{!isStaff && <NavItem to="/tickets" icon={TicketCheck} label={t("tickets")} />}{isStaff && <NavItem to="/notifications" icon={Bell} label={t("notifications")} badge={unread} />}<NavItem to="/settings" icon={Settings} label={t("settings")} /><NavItem to="/shortcuts" icon={CircleHelp} label={t("shortcuts")} />{!isStaff && <NavLink to={`/profile/${user.username}`}><UserRound /><span>{t("profile")}</span></NavLink>}</div>
     </aside>

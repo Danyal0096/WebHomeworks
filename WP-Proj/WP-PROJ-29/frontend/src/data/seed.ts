@@ -120,9 +120,9 @@ export const createSeedDatabase = (): Database => ({
     { id: "playlist-3", ownerId: basic.id, title: "Private sparks", description: "Just for me.", visibility: "private", coverUrl: null, generatedCover: true, trackIds: ["track-3", "track-9"], createdAt: now, updatedAt: now },
   ],
   notifications: [
-    { id: "notice-1", userId: gold.id, title: "Future Bloom is here early", body: "Your Gold early-access window is open.", kind: "release", readAt: null, createdAt: "2026-07-06T07:00:00.000Z" },
-    { id: "notice-2", userId: gold.id, title: "New follower", body: "Nila Ray followed you.", kind: "social", readAt: null, createdAt: "2026-07-05T11:00:00.000Z" },
-    { id: "notice-3", userId: basic.id, title: "Account protected", body: "Your security settings are up to date.", kind: "critical", readAt: null, createdAt: "2026-07-04T09:00:00.000Z" },
+    { id: "notice-1", userId: gold.id, title: "Future Bloom is here early", body: "Your Gold early-access window is open.", titleKey: "noticeGoldEarlyTitle", bodyKey: "noticeGoldEarlyBody", values: { releaseTitle: "Future Bloom" }, kind: "release", readAt: null, createdAt: "2026-07-06T07:00:00.000Z" },
+    { id: "notice-2", userId: gold.id, title: "New follower", body: "Nila Ray followed you.", titleKey: "noticeNewFollowerTitle", bodyKey: "noticeNewFollowerBody", values: { name: "Nila Ray" }, kind: "social", readAt: null, createdAt: "2026-07-05T11:00:00.000Z" },
+    { id: "notice-3", userId: basic.id, title: "Account protected", body: "Your security settings are up to date.", titleKey: "noticeAccountProtectedTitle", bodyKey: "noticeAccountProtectedBody", kind: "critical", readAt: null, createdAt: "2026-07-04T09:00:00.000Z" },
   ],
   verificationRequests: [
     { id: "verify-1", userId: unverified.id, status: "pending", portfolioUrls: ["https://example.com/cedar-bloom"], note: "Independent producer and live performer.", reason: null, createdAt: "2026-07-01T10:00:00.000Z", decidedAt: null },

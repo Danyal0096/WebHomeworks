@@ -107,7 +107,7 @@ export const repository = {
       followerIds: [], followingIds: [], likedTrackIds: [], savedPlaylistIds: [], recentlyPlayedIds: [], streamDates: {}, usernameChangedAt: null, deletedAt: null,
     };
     db.users.push(user);
-    db.notifications.push({ id: id("notice"), userId, title: "Welcome to Sonora", body: "Your listening space is ready.", kind: "important", readAt: null, createdAt: new Date().toISOString() });
+    db.notifications.push({ id: id("notice"), userId, title: "Welcome to Sonora", body: "Your listening space is ready.", titleKey: "noticeWelcomeTitle", bodyKey: "noticeWelcomeBody", kind: "important", readAt: null, createdAt: new Date().toISOString() });
     save(db); localStorage.setItem(SESSION_KEY, user.id); revision += 1; listeners.forEach((listener) => listener());
     return structuredClone(user);
   },
@@ -154,7 +154,7 @@ export const repository = {
     const validSaved = db.playlists.filter((playlist) => me.savedPlaylistIds.includes(playlist.id) && playlist.visibility === "public");
     if (validSaved.length !== me.savedPlaylistIds.length) {
       me.savedPlaylistIds = validSaved.map((playlist) => playlist.id);
-      db.notifications.push({ id: id("notice"), userId: me.id, title: "Saved playlist changed", body: "A saved playlist is no longer public and was removed.", kind: "important", readAt: null, createdAt: new Date().toISOString() }); save(db);
+      db.notifications.push({ id: id("notice"), userId: me.id, title: "Saved playlist changed", body: "A saved playlist is no longer public and was removed.", titleKey: "noticeSavedPlaylistTitle", bodyKey: "noticeSavedPlaylistBody", kind: "important", readAt: null, createdAt: new Date().toISOString() }); save(db);
     }
     return { owned: structuredClone(owned), saved: structuredClone(validSaved), liked: tracks.filter((track) => me.likedTrackIds.includes(track.id)) };
   },
@@ -196,7 +196,7 @@ export const repository = {
       const day = notice.createdAt.slice(0, 10); const count = daily.get(day) ?? 0;
       if (count < 5) { visible.push(notice); daily.set(day, count + 1); } else overflow.set(day, (overflow.get(day) ?? 0) + 1);
     });
-    overflow.forEach((count, day) => visible.push({ id: `digest-${day}`, userId: me.id, title: "Daily notification digest", body: `${count} additional updates are collected in this digest.`, kind: "important", readAt: null, createdAt: `${day}T23:59:59.000Z` }));
+    overflow.forEach((count, day) => visible.push({ id: `digest-${day}`, userId: me.id, title: "Daily notification digest", body: `${count} additional updates are collected in this digest.`, titleKey: "noticeDigestTitle", bodyKey: "noticeDigestBody", values: { count }, kind: "important", readAt: null, createdAt: `${day}T23:59:59.000Z` }));
     return structuredClone(visible.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
   },
   readNotification(notificationId: string): void { const db = load(); const me = current(db); const n = db.notifications.find((x) => x.id === notificationId && x.userId === me.id); if (n) n.readAt = new Date().toISOString(); save(db); },
@@ -222,7 +222,7 @@ export const repository = {
     const starts = new Date(); const expires = new Date(starts); expires.setMonth(expires.getMonth() + plan.durationMonths);
     me.subscription = { id: id("sub"), tier: plan.tier, status: "active", startsAt: starts.toISOString(), expiresAt: expires.toISOString(), canUpgradeToGold: plan.tier !== "gold" };
     db.payments.push({ id: id("payment"), userId: me.id, planId: plan.id, tier: plan.tier, durationMonths: plan.durationMonths, monthlyPriceRial: plan.monthlyPriceRial, discountPercent: plan.discountPercent, finalPriceRial: plan.finalPriceRial, provider: "demo", status: "succeeded", createdAt: starts.toISOString() });
-    db.notifications.push({ id: id("notice"), userId: me.id, title: `${plan.tier === "gold" ? "Gold" : "Silver"} activated`, body: "Demo checkout completed locally. No payment was charged.", kind: "critical", readAt: null, createdAt: starts.toISOString() }); save(db);
+    db.notifications.push({ id: id("notice"), userId: me.id, title: `${plan.tier === "gold" ? "Gold" : "Silver"} activated`, body: "Demo checkout completed locally. No payment was charged.", titleKey: "noticePaymentTitle", bodyKey: "noticePaymentBody", values: { tier: plan.tier === "gold" ? "Gold" : "Silver" }, kind: "critical", readAt: null, createdAt: starts.toISOString() }); save(db);
   },
   verificationRequests(): VerificationRequest[] { return structuredClone(load().verificationRequests); },
   submitVerification(portfolioUrls: string[], note: string): void {

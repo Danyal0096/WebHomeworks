@@ -195,8 +195,8 @@ export interface Payout {
 }
 
 export interface Payment {
-  id: string; userId: string; planId: string; tier: "silver" | "gold"; durationMonths: 1 | 3 | 6 | 12;
-  monthlyPriceRial: number; discountPercent: number; finalPriceRial: number; provider: "demo"; status: "succeeded"; createdAt: string;
+  id: string; userId: string; planId: string | null; tier: "silver" | "gold"; durationMonths: 1 | 3 | 6 | 12;
+  monthlyPriceRial: number; discountPercent: number; finalPriceRial: number; provider: "demo" | "mock" | "zarinpal"; status: "pending" | "succeeded" | "failed"; createdAt: string;
 }
 
 export interface QueueState {

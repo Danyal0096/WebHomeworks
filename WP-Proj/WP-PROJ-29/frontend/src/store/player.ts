@@ -36,6 +36,7 @@ interface PlayerState {
   setLyricsOpen: (open: boolean) => void;
   setGestureRequired: (required: boolean) => void;
   markFailure: (trackId: string) => void;
+  resetFailures: () => void;
   clearToast: () => void;
 }
 
@@ -53,7 +54,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     if (!selected?.isPlayableForViewer) return { isPlaying: false, toast: selected?.lockReason === "gold_required" ? "goldRequired" : selected?.lockReason === "explicit_restricted" ? "explicitRestricted" : selected?.lockReason === "daily_stream_limit" ? "dailyLimit" : "cannotQueueLocked" };
     const next = { trackIds: playableIds, currentIndex: Math.max(0, playableIds.indexOf(selectedId)), repeatMode: get().repeatMode, shuffleEnabled: get().shuffleEnabled, volume: get().volume };
     persist(next); repository.recordRecentlyPlayed(selectedId);
-    return { ...next, isPlaying: true, position: 0, gestureRequired: false, toast: "queueReplaced" };
+    return { ...next, isPlaying: true, position: 0, gestureRequired: false, failureCount: 0, toast: "queueReplaced" };
   }),
   addNext: (trackId) => set((state) => {
     const candidate = repository.tracks().find((track) => track.id === trackId);
@@ -98,6 +99,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   setQueueOpen: (queueOpen) => set({ queueOpen }), setMobileExpanded: (mobileExpanded) => set({ mobileExpanded }), setLyricsOpen: (lyricsOpen) => set({ lyricsOpen }),
   setGestureRequired: (gestureRequired) => set({ gestureRequired, isPlaying: false }),
   markFailure: (trackId) => set((state) => ({ failureCount: state.failureCount + 1, unavailableIds: [...new Set([...state.unavailableIds, trackId])] })),
+  resetFailures: () => set({ failureCount: 0 }),
   clearToast: () => set({ toast: null }),
 }));
 

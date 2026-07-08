@@ -1,0 +1,95 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: sonora
+      POSTGRES_USER: sonora
+      POSTGRES_PASSWORD: sonora_dev_password
+    volumes:
+      - sonora-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonora -d sonora"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      SONORA_SECRET_KEY: ${SONORA_SECRET_KEY:-sonora-compose-dev-only-change-me-32-bytes}
+      SONORA_DEBUG: ${SONORA_DEBUG:-0}
+      SONORA_DEMO_MODE: ${SONORA_DEMO_MODE:-1}
+      DATABASE_URL: postgresql://sonora:sonora_dev_password@postgres:5432/sonora
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      SONORA_CELERY_EAGER: "0"
+      SONORA_ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      SONORA_CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      SONORA_CSRF_TRUSTED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      SONORA_FRONTEND_URL: http://localhost:8080
+    volumes:
+      - sonora-media:/app/media
+      - sonora-private-media:/app/private_media
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_demo &&
+             daphne -b 0.0.0.0 -p 8000 sonora.asgi:application"
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      SONORA_SECRET_KEY: ${SONORA_SECRET_KEY:-sonora-compose-dev-only-change-me-32-bytes}
+      SONORA_DEBUG: ${SONORA_DEBUG:-0}
+      SONORA_DEMO_MODE: ${SONORA_DEMO_MODE:-1}
+      DATABASE_URL: postgresql://sonora:sonora_dev_password@postgres:5432/sonora
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      SONORA_CELERY_EAGER: "0"
+    volumes:
+      - sonora-media:/app/media
+      - sonora-private-media:/app/private_media
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    command: ["celery", "-A", "sonora", "worker", "--loglevel=INFO"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_SONORA_API_BASE: /api/v1
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  sonora-postgres:
+  sonora-media:
+  sonora-private-media:

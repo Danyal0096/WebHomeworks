@@ -1,0 +1,2964 @@
+openapi: 3.0.3
+info:
+  title: Sonora API
+  version: 1.0.0
+  description: Backend API for Sonora music streaming.
+paths:
+  /api/v1/admin/audit-events/:
+    get:
+      operationId: v1_admin_audit_events_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEvent'
+          description: ''
+  /api/v1/admin/payouts/:
+    get:
+      operationId: v1_admin_payouts_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/admin/payouts/{id}/settle/:
+    post:
+      operationId: v1_admin_payouts_settle_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/admin/releases/{id}/archive/:
+    post:
+      operationId: v1_admin_releases_archive_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Release'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Release'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Release'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+  /api/v1/admin/reports/overview/:
+    get:
+      operationId: v1_admin_reports_overview_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/admin/subscription-plans/:
+    get:
+      operationId: v1_admin_subscription_plans_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+          description: ''
+    post:
+      operationId: v1_admin_subscription_plans_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plan'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Plan'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Plan'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+          description: ''
+    patch:
+      operationId: v1_admin_subscription_plans_partial_update
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlan'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPlan'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlan'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+          description: ''
+  /api/v1/artist/analytics/:
+    get:
+      operationId: v1_artist_analytics_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/artist/payouts/:
+    get:
+      operationId: v1_artist_payouts_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/artist/releases/:
+    get:
+      operationId: v1_artist_releases_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+    post:
+      operationId: v1_artist_releases_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Release'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Release'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Release'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+  /api/v1/artist/releases/{id}/:
+    get:
+      operationId: v1_artist_releases_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+    patch:
+      operationId: v1_artist_releases_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRelease'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRelease'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRelease'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+    delete:
+      operationId: v1_artist_releases_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/artist/releases/{id}/tracks/:
+    post:
+      operationId: v1_artist_releases_tracks_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Track'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Track'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Track'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+  /api/v1/artist/verification-requests/:
+    get:
+      operationId: v1_artist_verification_requests_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationRequest'
+          description: ''
+    post:
+      operationId: v1_artist_verification_requests_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationRequest'
+          description: ''
+  /api/v1/artists/{username}/:
+    get:
+      operationId: v1_artists_retrieve
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicProfile'
+          description: ''
+  /api/v1/auth/jwt/refresh/:
+    post:
+      operationId: v1_auth_jwt_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: v1_auth_login_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: v1_auth_logout_create
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/password-reset/confirm/:
+    post:
+      operationId: v1_auth_password_reset_confirm_create
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/password-reset/request/:
+    post:
+      operationId: v1_auth_password_reset_request_create
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/register/:
+    post:
+      operationId: v1_auth_register_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/v1/auth/register/artist/:
+    post:
+      operationId: v1_auth_register_artist_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: v1_auth_token_refresh_create
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/me/:
+    get:
+      operationId: v1_me_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    patch:
+      operationId: v1_me_partial_update
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/me/delete/:
+    post:
+      operationId: v1_me_delete_create
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/me/library/:
+    get:
+      operationId: v1_me_library_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/media/downloads/{token}/:
+    get:
+      operationId: v1_media_downloads_retrieve
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/media/streams/{token}/:
+    get:
+      operationId: v1_media_streams_retrieve
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/notifications/:
+    get:
+      operationId: v1_notifications_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/{id}/:
+    post:
+      operationId: v1_notifications_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_notifications_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/notifications/{id}/read/:
+    post:
+      operationId: v1_notifications_read_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_notifications_read_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/notifications/mark-all-read/:
+    post:
+      operationId: v1_notifications_mark_all_read_create
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_notifications_mark_all_read_destroy
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/payments/:
+    get:
+      operationId: v1_payments_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/v1/payments/{provider}/callback/:
+    post:
+      operationId: v1_payments_callback_create
+      parameters:
+      - in: path
+        name: provider
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/playback-sessions/{id}/progress/:
+    post:
+      operationId: v1_playback_sessions_progress_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/playlists/:
+    get:
+      operationId: v1_playlists_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    post:
+      operationId: v1_playlists_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+  /api/v1/playlists/{id}/:
+    get:
+      operationId: v1_playlists_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    patch:
+      operationId: v1_playlists_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    delete:
+      operationId: v1_playlists_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/playlists/{id}/playback-context/:
+    get:
+      operationId: v1_playlists_playback_context_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+  /api/v1/playlists/{id}/save/:
+    post:
+      operationId: v1_playlists_save_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_playlists_save_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/playlists/{id}/tracks/:
+    post:
+      operationId: v1_playlists_tracks_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    patch:
+      operationId: v1_playlists_tracks_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    delete:
+      operationId: v1_playlists_tracks_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/playlists/{id}/tracks/{track_id}/:
+    post:
+      operationId: v1_playlists_tracks_create_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: track_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    patch:
+      operationId: v1_playlists_tracks_partial_update_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: track_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlaylist'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          description: ''
+    delete:
+      operationId: v1_playlists_tracks_destroy_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: track_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/profiles/{username}/:
+    get:
+      operationId: v1_profiles_retrieve
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicProfile'
+          description: ''
+  /api/v1/profiles/{username}/follow/:
+    post:
+      operationId: v1_profiles_follow_create
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_profiles_follow_destroy
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/releases/:
+    get:
+      operationId: v1_releases_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+  /api/v1/releases/{id}/:
+    get:
+      operationId: v1_releases_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+          description: ''
+  /api/v1/rooms/:
+    post:
+      operationId: v1_rooms_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Room'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/rooms/{invite_code}/:
+    get:
+      operationId: v1_rooms_retrieve
+      parameters:
+      - in: path
+        name: invite_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/rooms/{invite_code}/join/:
+    post:
+      operationId: v1_rooms_join_create
+      parameters:
+      - in: path
+        name: invite_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Room'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/rooms/{id}/leave/:
+    post:
+      operationId: v1_rooms_leave_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Room'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/rooms/{id}/participants/{user_id}/permissions/:
+    post:
+      operationId: v1_rooms_participants_permissions_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Room'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/rooms/{id}/queue/:
+    post:
+      operationId: v1_rooms_queue_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Room'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/rooms/{id}/transfer-host/:
+    post:
+      operationId: v1_rooms_transfer_host_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Room'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/v1/search/:
+    get:
+      operationId: v1_search_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+  /api/v1/subscription/:
+    get:
+      operationId: v1_subscription_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveSubscription'
+          description: ''
+  /api/v1/subscription/plans/:
+    get:
+      operationId: v1_subscription_plans_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+          description: ''
+  /api/v1/subscription/purchases/:
+    post:
+      operationId: v1_subscription_purchases_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Payment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/v1/support/verification-requests/:
+    get:
+      operationId: v1_support_verification_requests_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationRequest'
+          description: ''
+  /api/v1/support/verification-requests/{id}/approve/:
+    post:
+      operationId: v1_support_verification_requests_approve_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationRequest'
+          description: ''
+  /api/v1/support/verification-requests/{id}/reject/:
+    post:
+      operationId: v1_support_verification_requests_reject_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationRequest'
+          description: ''
+  /api/v1/tickets/:
+    get:
+      operationId: v1_tickets_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    post:
+      operationId: v1_tickets_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/tickets/{id}/:
+    get:
+      operationId: v1_tickets_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/tickets/{id}/claim/:
+    get:
+      operationId: v1_tickets_claim_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    post:
+      operationId: v1_tickets_claim_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/tickets/{id}/close/:
+    get:
+      operationId: v1_tickets_close_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    post:
+      operationId: v1_tickets_close_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/tickets/{id}/messages/:
+    get:
+      operationId: v1_tickets_messages_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    post:
+      operationId: v1_tickets_messages_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/tracks/:
+    get:
+      operationId: v1_tracks_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+  /api/v1/tracks/{id}/:
+    get:
+      operationId: v1_tracks_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+  /api/v1/tracks/{id}/download-tickets/:
+    post:
+      operationId: v1_tracks_download_tickets_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/tracks/{id}/like/:
+    post:
+      operationId: v1_tracks_like_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_tracks_like_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tracks/{id}/playback-sessions/:
+    post:
+      operationId: v1_tracks_playback_sessions_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Track'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Track'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Track'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+components:
+  schemas:
+    ActiveSubscription:
+      type: object
+      properties:
+        id:
+          type: string
+        tier:
+          type: string
+        status:
+          type: string
+        startsAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        canUpgradeToGold:
+          type: boolean
+      required:
+      - canUpgradeToGold
+      - expiresAt
+      - id
+      - startsAt
+      - status
+      - tier
+    AuditEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        actorId:
+          type: string
+          nullable: true
+        action:
+          type: string
+          maxLength: 120
+        target:
+          type: string
+          maxLength: 180
+        before:
+          nullable: true
+        after:
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+      required:
+      - action
+      - actorId
+      - createdAt
+      - id
+      - requestId
+      - target
+    GenderEnum:
+      enum:
+      - female
+      - male
+      - non_binary
+      - prefer_not_to_say
+      type: string
+      description: |-
+        * `female` - Female
+        * `male` - Male
+        * `non_binary` - Non-binary
+        * `prefer_not_to_say` - Prefer not to say
+    KindEnum:
+      enum:
+      - critical
+      - important
+      - social
+      - release
+      type: string
+      description: |-
+        * `critical` - Critical
+        * `important` - Important
+        * `social` - Social
+        * `release` - Release
+    LocaleEnum:
+      enum:
+      - en
+      - es
+      - de
+      - fr
+      - ru
+      - zh-CN
+      type: string
+      description: |-
+        * `en` - English
+        * `es` - Spanish
+        * `de` - German
+        * `fr` - French
+        * `ru` - Russian
+        * `zh-CN` - Chinese
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+          readOnly: true
+        avatarUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        kind:
+          type: string
+        followerCount:
+          type: integer
+          readOnly: true
+        followingCount:
+          type: integer
+          readOnly: true
+        isFollowing:
+          type: boolean
+          readOnly: true
+        publicPlaylistCount:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+        birthDate:
+          type: string
+          format: date
+        gender:
+          type: string
+          nullable: true
+        locale:
+          type: string
+        timezone:
+          type: string
+        theme:
+          type: string
+        explicitContentEnabled:
+          type: boolean
+        notificationPreference:
+          type: string
+        subscription:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        artistProfile:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        password:
+          type: string
+          readOnly: true
+        followerIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        followingIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        likedTrackIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        savedPlaylistIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        recentlyPlayedIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        streamDates:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
+        usernameChangedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - artistProfile
+      - avatarUrl
+      - birthDate
+      - deletedAt
+      - displayName
+      - email
+      - explicitContentEnabled
+      - followerCount
+      - followerIds
+      - followingCount
+      - followingIds
+      - gender
+      - id
+      - isFollowing
+      - kind
+      - likedTrackIds
+      - locale
+      - notificationPreference
+      - password
+      - publicPlaylistCount
+      - recentlyPlayedIds
+      - savedPlaylistIds
+      - streamDates
+      - subscription
+      - theme
+      - timezone
+      - username
+      - usernameChangedAt
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        title:
+          type: string
+          maxLength: 180
+        body:
+          type: string
+        titleKey:
+          type: string
+        bodyKey:
+          type: string
+        values: {}
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - body
+      - bodyKey
+      - createdAt
+      - id
+      - kind
+      - readAt
+      - title
+      - titleKey
+      - userId
+    NullEnum:
+      enum:
+      - null
+    PatchedMe:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+          readOnly: true
+        avatarUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        kind:
+          type: string
+        followerCount:
+          type: integer
+          readOnly: true
+        followingCount:
+          type: integer
+          readOnly: true
+        isFollowing:
+          type: boolean
+          readOnly: true
+        publicPlaylistCount:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+        birthDate:
+          type: string
+          format: date
+        gender:
+          type: string
+          nullable: true
+        locale:
+          type: string
+        timezone:
+          type: string
+        theme:
+          type: string
+        explicitContentEnabled:
+          type: boolean
+        notificationPreference:
+          type: string
+        subscription:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        artistProfile:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        password:
+          type: string
+          readOnly: true
+        followerIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        followingIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        likedTrackIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        savedPlaylistIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        recentlyPlayedIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        streamDates:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
+        usernameChangedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PatchedPlan:
+      type: object
+      properties:
+        id:
+          type: string
+        tier:
+          $ref: '#/components/schemas/TierEnum'
+        durationMonths:
+          type: integer
+        monthlyPriceRial:
+          type: integer
+        discountPercent:
+          type: integer
+        finalPriceRial:
+          type: integer
+        isAvailable:
+          type: boolean
+        label:
+          type: string
+          nullable: true
+          maxLength: 120
+        startsAt:
+          type: string
+          format: date-time
+          nullable: true
+        endsAt:
+          type: string
+          format: date-time
+          nullable: true
+    PatchedPlaylist:
+      type: object
+      properties:
+        id:
+          type: string
+        owner:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        ownerId:
+          type: string
+        title:
+          type: string
+          maxLength: 160
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        coverUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        generatedCover:
+          type: boolean
+        tracks:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        trackIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        isSaved:
+          type: boolean
+          readOnly: true
+        canEdit:
+          type: boolean
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    PatchedRelease:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+          maxLength: 180
+        coverUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        primaryArtist:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        publicReleaseAt:
+          type: string
+          format: date-time
+        isEarlyAccess:
+          type: boolean
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ReleaseStatusEnum'
+        trackIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        genre:
+          type: string
+          maxLength: 80
+        ownerUserId:
+          type: string
+        trackCount:
+          type: integer
+          readOnly: true
+        isPlayableForViewer:
+          type: boolean
+          readOnly: true
+        lockReason:
+          type: string
+          nullable: true
+          readOnly: true
+        tracks:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        planId:
+          type: string
+          nullable: true
+        tier:
+          type: string
+          maxLength: 12
+        durationMonths:
+          type: integer
+        monthlyPriceRial:
+          type: integer
+        discountPercent:
+          type: integer
+        finalPriceRial:
+          type: integer
+        provider:
+          $ref: '#/components/schemas/ProviderEnum'
+        status:
+          $ref: '#/components/schemas/PaymentStatusEnum'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - createdAt
+      - discountPercent
+      - durationMonths
+      - finalPriceRial
+      - id
+      - monthlyPriceRial
+      - planId
+      - tier
+      - userId
+    PaymentStatusEnum:
+      enum:
+      - pending
+      - succeeded
+      - failed
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `succeeded` - Succeeded
+        * `failed` - Failed
+    Plan:
+      type: object
+      properties:
+        id:
+          type: string
+        tier:
+          $ref: '#/components/schemas/TierEnum'
+        durationMonths:
+          type: integer
+        monthlyPriceRial:
+          type: integer
+        discountPercent:
+          type: integer
+        finalPriceRial:
+          type: integer
+        isAvailable:
+          type: boolean
+        label:
+          type: string
+          nullable: true
+          maxLength: 120
+        startsAt:
+          type: string
+          format: date-time
+          nullable: true
+        endsAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - discountPercent
+      - durationMonths
+      - endsAt
+      - finalPriceRial
+      - id
+      - isAvailable
+      - monthlyPriceRial
+      - startsAt
+      - tier
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: string
+        owner:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        ownerId:
+          type: string
+        title:
+          type: string
+          maxLength: 160
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        coverUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        generatedCover:
+          type: boolean
+        tracks:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        trackIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        isSaved:
+          type: boolean
+          readOnly: true
+        canEdit:
+          type: boolean
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - canEdit
+      - coverUrl
+      - createdAt
+      - generatedCover
+      - id
+      - isSaved
+      - owner
+      - ownerId
+      - title
+      - trackIds
+      - tracks
+      - updatedAt
+    ProviderEnum:
+      enum:
+      - mock
+      - zarinpal
+      type: string
+      description: |-
+        * `mock` - Mock
+        * `zarinpal` - Zarinpal
+    PublicProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+          readOnly: true
+        avatarUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        kind:
+          type: string
+          readOnly: true
+        followerCount:
+          type: integer
+          readOnly: true
+        followingCount:
+          type: integer
+          readOnly: true
+        isFollowing:
+          type: boolean
+          readOnly: true
+        publicPlaylistCount:
+          type: integer
+          readOnly: true
+      required:
+      - avatarUrl
+      - displayName
+      - followerCount
+      - followingCount
+      - id
+      - isFollowing
+      - kind
+      - publicPlaylistCount
+      - username
+    Register:
+      type: object
+      properties:
+        displayName:
+          type: string
+          maxLength: 120
+        stageName:
+          type: string
+          maxLength: 140
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+          minLength: 10
+        birthDate:
+          type: string
+          format: date
+        gender:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        locale:
+          $ref: '#/components/schemas/LocaleEnum'
+        timezone:
+          type: string
+          maxLength: 64
+      required:
+      - birthDate
+      - displayName
+      - email
+      - gender
+      - locale
+      - password
+      - timezone
+    Release:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+          maxLength: 180
+        coverUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        primaryArtist:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        publicReleaseAt:
+          type: string
+          format: date-time
+        isEarlyAccess:
+          type: boolean
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ReleaseStatusEnum'
+        trackIds:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        genre:
+          type: string
+          maxLength: 80
+        ownerUserId:
+          type: string
+        trackCount:
+          type: integer
+          readOnly: true
+        isPlayableForViewer:
+          type: boolean
+          readOnly: true
+        lockReason:
+          type: string
+          nullable: true
+          readOnly: true
+        tracks:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - coverUrl
+      - id
+      - isEarlyAccess
+      - isPlayableForViewer
+      - lockReason
+      - ownerUserId
+      - primaryArtist
+      - publicReleaseAt
+      - title
+      - trackCount
+      - trackIds
+      - tracks
+      - type
+    ReleaseStatusEnum:
+      enum:
+      - draft
+      - processing
+      - ready
+      - scheduled
+      - published
+      - archived
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `processing` - Processing
+        * `ready` - Ready
+        * `scheduled` - Scheduled
+        * `published` - Published
+        * `archived` - Archived
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        inviteCode:
+          type: string
+        hostUserId:
+          type: string
+        status:
+          $ref: '#/components/schemas/RoomStatusEnum'
+        queue:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        currentQueueItemId:
+          type: string
+          nullable: true
+        positionSeconds:
+          type: number
+          format: double
+        isPlaying:
+          type: boolean
+        repeatMode:
+          type: string
+        shuffleEnabled:
+          type: boolean
+        participants:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - currentQueueItemId
+      - hostUserId
+      - id
+      - inviteCode
+      - isPlaying
+      - participants
+      - positionSeconds
+      - queue
+      - repeatMode
+      - shuffleEnabled
+      - updatedAt
+    RoomStatusEnum:
+      enum:
+      - active
+      - closed
+      type: string
+      description: |-
+        * `active` - Active
+        * `closed` - Closed
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+        creatorId:
+          type: string
+        subject:
+          type: string
+          maxLength: 180
+        status:
+          $ref: '#/components/schemas/TicketStatusEnum'
+        claimedById:
+          type: string
+          nullable: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketMessage'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - claimedById
+      - createdAt
+      - creatorId
+      - id
+      - messages
+      - subject
+    TicketMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        authorId:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - authorId
+      - body
+      - createdAt
+      - id
+    TicketStatusEnum:
+      enum:
+      - open
+      - answered
+      - closed
+      type: string
+      description: |-
+        * `open` - Open
+        * `answered` - Answered
+        * `closed` - Closed
+    TierEnum:
+      enum:
+      - silver
+      - gold
+      type: string
+      description: |-
+        * `silver` - Silver
+        * `gold` - Gold
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+        releaseId:
+          type: string
+        title:
+          type: string
+          maxLength: 180
+        coverUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        audioUrl:
+          type: string
+          nullable: true
+          readOnly: true
+        artists:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        releaseTitle:
+          type: string
+        durationSeconds:
+          type: integer
+        isExplicit:
+          type: boolean
+        isGoldEarlyAccess:
+          type: boolean
+          readOnly: true
+        publicReleaseAt:
+          type: string
+          format: date-time
+        genre:
+          type: string
+        lyrics:
+          type: string
+          nullable: true
+        streamCount:
+          type: integer
+        uniqueListenerCount:
+          type: integer
+        isPlayableForViewer:
+          type: boolean
+          readOnly: true
+        lockReason:
+          type: string
+          nullable: true
+          readOnly: true
+        isLiked:
+          type: boolean
+          readOnly: true
+      required:
+      - artists
+      - audioUrl
+      - coverUrl
+      - durationSeconds
+      - genre
+      - id
+      - isExplicit
+      - isGoldEarlyAccess
+      - isLiked
+      - isPlayableForViewer
+      - lockReason
+      - publicReleaseAt
+      - releaseId
+      - releaseTitle
+      - streamCount
+      - title
+      - uniqueListenerCount
+    VerificationRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        artistName:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/VerificationRequestStatusEnum'
+        portfolioUrls: {}
+        note:
+          type: string
+        reason:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        decidedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - artistName
+      - createdAt
+      - decidedAt
+      - id
+      - portfolioUrls
+      - userId
+    VerificationRequestStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      - withdrawn
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `approved` - Approved
+        * `rejected` - Rejected
+        * `withdrawn` - Withdrawn
+    VisibilityEnum:
+      enum:
+      - private
+      - public
+      type: string
+      description: |-
+        * `private` - Private
+        * `public` - Public
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

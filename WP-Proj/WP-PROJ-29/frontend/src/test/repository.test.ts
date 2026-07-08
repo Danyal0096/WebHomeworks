@@ -24,6 +24,18 @@ describe("local repository contract", () => {
     repository.logout(); expect(repository.login(registration.email, registration.password).id).toBe(user.id);
   });
 
+  it("logs out by clearing only the active local session while preserving account data", () => {
+    repository.login("listener.basic@sonora.demo", DEMO_PASSWORD);
+    repository.createPlaylist("Still here after logout");
+    repository.updateSettings({ theme: "light", locale: "fr" });
+    repository.logout();
+    expect(repository.sessionUser()).toBeNull();
+    const user = repository.login("listener.basic@sonora.demo", DEMO_PASSWORD);
+    expect(user.theme).toBe("light");
+    expect(user.locale).toBe("fr");
+    expect(repository.visiblePlaylists().some((playlist) => playlist.title === "Still here after logout")).toBe(true);
+  });
+
   it("registers an artist as a consumer with an unverified ArtistProfile", () => {
     const user = repository.register({ ...registration, email: "artist@example.com", stageName: "Test Signal" }, true);
     expect(user.kind).toBe("consumer"); expect(user.artistProfile?.stageName).toBe("Test Signal"); expect(user.artistProfile?.verifiedAt).toBeNull();

@@ -18,6 +18,7 @@ Object.defineProperty(globalThis, "localStorage", { configurable: true, value: s
 
 Object.defineProperty(HTMLMediaElement.prototype, "play", { configurable: true, value: vi.fn().mockResolvedValue(undefined) });
 Object.defineProperty(HTMLMediaElement.prototype, "pause", { configurable: true, value: vi.fn() });
+Object.defineProperty(HTMLMediaElement.prototype, "load", { configurable: true, value: vi.fn() });
 Object.defineProperty(globalThis.URL, "createObjectURL", { configurable: true, value: vi.fn(() => "blob:preview") });
 Object.defineProperty(globalThis.URL, "revokeObjectURL", { configurable: true, value: vi.fn() });
 Object.defineProperty(window, "matchMedia", { configurable: true, value: vi.fn(() => ({ matches: false, addListener: vi.fn(), removeListener: vi.fn(), addEventListener: vi.fn(), removeEventListener: vi.fn() })) });

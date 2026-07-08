@@ -4,6 +4,9 @@ import type {
   Database, DraftRelease, Locale, Notification, Playlist, PublicProfile, QueueState,
   RegistrationInput, SubscriptionPlan, Ticket, TrackView, User, VerificationRequest,
 } from "../domain/types";
+import { createDjangoApiRepository } from "./apiRepository";
+import { RepositoryError } from "./errors";
+export { RepositoryError } from "./errors";
 
 const DB_KEY = "sonora:phase1:database:v1";
 const SESSION_KEY = "sonora:phase1:session";
@@ -11,10 +14,6 @@ const QUEUE_KEY = "sonora:phase1:queue";
 const listeners = new Set<() => void>();
 let revision = 0;
 const id = (prefix: string) => `${prefix}-${globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
-
-export class RepositoryError extends Error {
-  constructor(public code: string, message: string) { super(message); }
-}
 
 const load = (): Database => {
   const raw = localStorage.getItem(DB_KEY);
@@ -69,7 +68,7 @@ const publicProfile = (user: User, viewer: User | null, db: Database): PublicPro
   publicPlaylistCount: db.playlists.filter((playlist) => playlist.ownerId === user.id && playlist.visibility === "public").length,
 });
 
-export const repository = {
+export const localRepository = {
   subscribe(listener: () => void) { listeners.add(listener); return () => listeners.delete(listener); },
   revision(): number { return revision; },
   database(): Database { return structuredClone(load()); },
@@ -91,6 +90,9 @@ export const repository = {
     revision += 1;
     listeners.forEach((listener) => listener());
     return structuredClone(user);
+  },
+  requestPasswordReset(email: string): void {
+    void email;
   },
   logout(): void { localStorage.removeItem(SESSION_KEY); revision += 1; listeners.forEach((listener) => listener()); },
   register(input: RegistrationInput, artist: boolean): User {
@@ -203,7 +205,7 @@ export const repository = {
   readAllNotifications(): void { const db = load(); const me = current(db); db.notifications.filter((n) => n.userId === me.id).forEach((n) => { n.readAt = n.readAt ?? new Date().toISOString(); }); save(db); },
   deleteNotification(notificationId: string): void { const db = load(); const me = current(db); db.notifications = db.notifications.filter((n) => n.id !== notificationId || n.userId !== me.id); save(db); },
   updateSettings(patch: Partial<Pick<User, "locale" | "theme" | "explicitContentEnabled" | "notificationPreference" | "timezone" | "displayName">>): void { const db = load(); Object.assign(current(db), patch); save(db); },
-  updateAvatar(avatarUrl: string): void { const db = load(); const me = current(db); if (!canEditAvatar(me.subscription.tier)) throw new RepositoryError("avatar_entitlement", "Profile image edits require Silver or Gold."); me.avatarUrl = avatarUrl; save(db); },
+  updateAvatar(avatar: string | File): void { const db = load(); const me = current(db); if (!canEditAvatar(me.subscription.tier)) throw new RepositoryError("avatar_entitlement", "Profile image edits require Silver or Gold."); me.avatarUrl = typeof avatar === "string" ? avatar : URL.createObjectURL(avatar); save(db); },
   updateUsername(username: string): void { const db = load(); const me = current(db); const normalized = username.trim().toLowerCase().replace(/^@/, ""); if (!/^[a-z0-9_]{3,24}$/.test(normalized)) throw new RepositoryError("username_invalid", "Use 3–24 lowercase letters, numbers, or underscores."); if (db.users.some((user) => user.id !== me.id && user.username === normalized)) throw new RepositoryError("username_taken", "That username is already in use."); if (me.usernameChangedAt && Date.now() - new Date(me.usernameChangedAt).getTime() < 30 * 86_400_000) throw new RepositoryError("username_cooldown", "Username can be changed once every 30 days."); me.username = normalized; me.usernameChangedAt = new Date().toISOString(); save(db); },
   deleteAccount(): void {
     const db = load(); const me = current(db); me.deletedAt = new Date().toISOString();
@@ -222,7 +224,7 @@ export const repository = {
     const starts = new Date(); const expires = new Date(starts); expires.setMonth(expires.getMonth() + plan.durationMonths);
     me.subscription = { id: id("sub"), tier: plan.tier, status: "active", startsAt: starts.toISOString(), expiresAt: expires.toISOString(), canUpgradeToGold: plan.tier !== "gold" };
     db.payments.push({ id: id("payment"), userId: me.id, planId: plan.id, tier: plan.tier, durationMonths: plan.durationMonths, monthlyPriceRial: plan.monthlyPriceRial, discountPercent: plan.discountPercent, finalPriceRial: plan.finalPriceRial, provider: "demo", status: "succeeded", createdAt: starts.toISOString() });
-    db.notifications.push({ id: id("notice"), userId: me.id, title: `${plan.tier === "gold" ? "Gold" : "Silver"} activated`, body: "Demo checkout completed locally. No payment was charged.", titleKey: "noticePaymentTitle", bodyKey: "noticePaymentBody", values: { tier: plan.tier === "gold" ? "Gold" : "Silver" }, kind: "critical", readAt: null, createdAt: starts.toISOString() }); save(db);
+    db.notifications.push({ id: id("notice"), userId: me.id, title: `${plan.tier === "gold" ? "Gold" : "Silver"} activated`, body: "Backend mock payment completed. No real payment was charged.", titleKey: "noticePaymentTitle", bodyKey: "noticePaymentBody", values: { tier: plan.tier === "gold" ? "Gold" : "Silver" }, kind: "critical", readAt: null, createdAt: starts.toISOString() }); save(db);
   },
   verificationRequests(): VerificationRequest[] { return structuredClone(load().verificationRequests); },
   submitVerification(portfolioUrls: string[], note: string): void {
@@ -260,5 +262,8 @@ export const repository = {
   },
   saveQueue(queue: QueueState): void { localStorage.setItem(QUEUE_KEY, JSON.stringify(queue)); },
 };
+
+const useApiRepository = import.meta.env.MODE !== "test" && import.meta.env.VITE_SONORA_REPOSITORY !== "local";
+export const repository = (useApiRepository ? createDjangoApiRepository(localRepository) : localRepository) as typeof localRepository;
 
 export const setLocale = (locale: Locale): void => repository.updateSettings({ locale });

@@ -3,6 +3,5 @@
 /docs/*.md
 /docs/*.txt
 /MANIFEST.txt
-
-# Original handoff archive
-/sonora_md_package.zip
+**/.vite-cache/
+**/.pytest_cache/

@@ -38,6 +38,18 @@ describe("queue and player behavior", () => {
   });
 
   it("skips a failed source after a short delay", async () => {
-    vi.useFakeTimers(); const tracks = repository.tracks().slice(0, 3); act(() => usePlayer.getState().replaceContext(tracks, tracks[0].id)); const view = render(<MemoryRouter><Player /></MemoryRouter>); const audio = view.container.querySelector("audio")!; fireEvent.error(audio); await act(async () => vi.advanceTimersByTimeAsync(600)); expect(usePlayer.getState().currentIndex).toBe(1); expect(usePlayer.getState().unavailableIds).toContain(tracks[0].id); vi.useRealTimers(); view.unmount();
+    vi.useFakeTimers();
+    const tracks = repository.tracks().slice(0, 3);
+    act(() => usePlayer.getState().replaceContext(tracks, tracks[0].id));
+    const view = render(<MemoryRouter><Player /></MemoryRouter>);
+    const audio = view.container.querySelector("audio")!;
+    await act(async () => { await Promise.resolve(); });
+    expect(audio.getAttribute("src")).toContain(tracks[0].audioUrl);
+    fireEvent.error(audio);
+    await act(async () => vi.advanceTimersByTimeAsync(600));
+    expect(usePlayer.getState().currentIndex).toBe(1);
+    expect(usePlayer.getState().unavailableIds).toContain(tracks[0].id);
+    vi.useRealTimers();
+    view.unmount();
   });
 });

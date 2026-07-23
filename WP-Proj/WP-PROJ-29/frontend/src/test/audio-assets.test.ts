@@ -4,7 +4,9 @@ import { describe, expect, it } from "vitest";
 import { seedTracks } from "../data/seed";
 
 function inspectPcmWav(fileName: string) {
-  const buffer = readFileSync(join(process.cwd(), "public", "media", "audio", fileName));
+  const buffer = readFileSync(
+    join(process.cwd(), "public", "media", "audio", fileName),
+  );
   expect(buffer.toString("ascii", 0, 4)).toBe("RIFF");
   expect(buffer.toString("ascii", 8, 12)).toBe("WAVE");
   const sampleRate = buffer.readUInt32LE(24);
@@ -20,7 +22,13 @@ function inspectPcmWav(fileName: string) {
     peak = Math.max(peak, absolute);
     sumSq += sample * sample;
   }
-  return { sampleRate, bitsPerSample, duration: samples / sampleRate, peak, rms: Math.sqrt(sumSq / samples) };
+  return {
+    sampleRate,
+    bitsPerSample,
+    duration: samples / sampleRate,
+    peak,
+    rms: Math.sqrt(sumSq / samples),
+  };
 }
 
 describe("local audio assets", () => {

@@ -2,9 +2,19 @@ export type UserKind = "consumer" | "support" | "admin";
 export type SubscriptionTier = "basic" | "silver" | "gold";
 export type PlaylistVisibility = "private" | "public";
 export type ReleaseType = "album" | "single";
-export type ReleaseStatus = "draft" | "processing" | "ready" | "scheduled" | "published" | "archived";
+export type ReleaseStatus =
+  | "draft"
+  | "processing"
+  | "ready"
+  | "scheduled"
+  | "published"
+  | "archived";
 export type RepeatMode = "off" | "all" | "one";
-export type NotificationPreference = "all" | "important_only" | "max_five_daily" | "muted";
+export type NotificationPreference =
+  | "all"
+  | "important_only"
+  | "max_five_daily"
+  | "muted";
 export type Locale = "en" | "es" | "de" | "fr" | "ru" | "zh-CN";
 
 export interface ActiveSubscription {
@@ -46,6 +56,7 @@ export interface User {
   likedTrackIds: string[];
   savedPlaylistIds: string[];
   recentlyPlayedIds: string[];
+  recentlyPlayedPlaylistIds: string[];
   streamDates: Record<string, string>;
   usernameChangedAt: string | null;
   deletedAt: string | null;
@@ -90,7 +101,11 @@ export interface Track {
 
 export interface TrackView extends Track {
   isPlayableForViewer: boolean;
-  lockReason: "gold_required" | "explicit_restricted" | "daily_stream_limit" | null;
+  lockReason:
+    | "gold_required"
+    | "explicit_restricted"
+    | "daily_stream_limit"
+    | null;
   isLiked: boolean;
 }
 
@@ -195,8 +210,17 @@ export interface Payout {
 }
 
 export interface Payment {
-  id: string; userId: string; planId: string | null; tier: "silver" | "gold"; durationMonths: 1 | 3 | 6 | 12;
-  monthlyPriceRial: number; discountPercent: number; finalPriceRial: number; provider: "demo" | "mock" | "zarinpal"; status: "pending" | "succeeded" | "failed"; createdAt: string;
+  id: string;
+  userId: string;
+  planId: string | null;
+  tier: "silver" | "gold";
+  durationMonths: 1 | 3 | 6 | 12;
+  monthlyPriceRial: number;
+  discountPercent: number;
+  finalPriceRial: number;
+  provider: "demo" | "mock" | "zarinpal";
+  status: "pending" | "succeeded" | "failed";
+  createdAt: string;
 }
 
 export interface QueueState {
@@ -207,12 +231,34 @@ export interface QueueState {
   volume: number;
 }
 
-export interface RoomQueueItem { id: string; trackId: string; addedByUserId: string; addedAt: string; }
-export interface RoomParticipant { userId: string; displayName: string; avatarUrl: string | null; joinedAt: string; isHost: boolean; canControl: boolean; accessState: "playable" | "tier_locked" | "explicit_locked"; }
+export interface RoomQueueItem {
+  id: string;
+  trackId: string;
+  addedByUserId: string;
+  addedAt: string;
+}
+export interface RoomParticipant {
+  userId: string;
+  displayName: string;
+  avatarUrl: string | null;
+  joinedAt: string;
+  isHost: boolean;
+  canControl: boolean;
+  accessState: "playable" | "tier_locked" | "explicit_locked";
+}
 export interface ListeningRoom {
-  id: string; inviteCode: string; hostUserId: string; status: "active" | "closed"; queue: RoomQueueItem[];
-  currentQueueItemId: string | null; positionSeconds: number; isPlaying: boolean; repeatMode: RepeatMode;
-  shuffleEnabled: boolean; participants: RoomParticipant[]; updatedAt: string;
+  id: string;
+  inviteCode: string;
+  hostUserId: string;
+  status: "active" | "closed";
+  queue: RoomQueueItem[];
+  currentQueueItemId: string | null;
+  positionSeconds: number;
+  isPlaying: boolean;
+  repeatMode: RepeatMode;
+  shuffleEnabled: boolean;
+  participants: RoomParticipant[];
+  updatedAt: string;
 }
 
 export interface DraftRelease {

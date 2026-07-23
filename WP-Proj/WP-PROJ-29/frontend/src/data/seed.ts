@@ -1,5 +1,28 @@
-import { finalPriceRial } from "../domain/entitlements";
+import { finalPriceRial, localDay } from "../domain/entitlements";
 import type { Database, Release, SubscriptionPlan, Track, User } from "../domain/types";
+
+const demoStreamDates = (timezone = "Asia/Tehran"): Record<string, string> => {
+  const day = (ago: number) => {
+    const date = new Date();
+    date.setDate(date.getDate() - ago);
+    return localDay(timezone, date);
+  };
+  return {
+    "track-1": day(0),
+    "track-2": day(0),
+    "track-3": day(0),
+    "track-4": day(0),
+    "track-5": day(1),
+    "track-6": day(1),
+    "track-7": day(2),
+    "track-8": day(3),
+    "track-9": day(4),
+    "track-10": day(5),
+    "track-11": day(6),
+    "track-12": day(7),
+    "track-13": day(0),
+  };
+};
 
 const now = "2026-07-06T08:00:00.000Z";
 const future = "2026-08-01T00:00:00.000Z";
@@ -36,7 +59,8 @@ const baseUser = (id: string, email: string, displayName: string, tier: "basic" 
   likedTrackIds: ["track-1", "track-5"],
   savedPlaylistIds: [],
   recentlyPlayedIds: ["track-3", "track-1", "track-8"],
-  streamDates: {},
+  recentlyPlayedPlaylistIds: ["playlist-1", "playlist-2"],
+  streamDates: demoStreamDates(),
   usernameChangedAt: null,
   deletedAt: null,
 });
@@ -60,6 +84,21 @@ artist3.username = "solcircuit";
 const artist4 = baseUser("user-artist-4", "mira@sonora.demo", "Mira Moss", "silver");
 artist4.artistProfile = { id: "artist-4", stageName: "Mira Moss", bio: "Acoustic fragments with an electronic pulse.", verifiedAt: "2025-04-02T10:00:00.000Z", genre: "Indie" };
 artist4.username = "miramoss";
+const listener1 = baseUser("user-listener-1", "listener.jade@sonora.demo", "Jade Quill", "basic");
+listener1.username = "jadequill";
+listener1.likedTrackIds = ["track-2", "track-8"];
+listener1.recentlyPlayedIds = ["track-2", "track-5"];
+listener1.recentlyPlayedPlaylistIds = ["playlist-1"];
+const listener2 = baseUser("user-listener-2", "listener.oren@sonora.demo", "Oren Hale", "silver");
+listener2.username = "orenhale";
+listener2.likedTrackIds = ["track-3", "track-10"];
+listener2.recentlyPlayedIds = ["track-10", "track-1"];
+listener2.recentlyPlayedPlaylistIds = ["playlist-2", "playlist-1"];
+const listener3 = baseUser("user-listener-3", "listener.sena@sonora.demo", "Sena Park", "gold");
+listener3.username = "senapark";
+listener3.likedTrackIds = ["track-1", "track-7", "track-11"];
+listener3.recentlyPlayedIds = ["track-11", "track-7", "track-4"];
+listener3.recentlyPlayedPlaylistIds = ["playlist-1", "playlist-2"];
 const support = baseUser("user-support", "support@sonora.demo", "Sonora Support", "basic");
 support.kind = "support";
 support.avatarUrl = null;
@@ -69,27 +108,43 @@ admin.kind = "admin";
 admin.avatarUrl = null;
 admin.username = "internal-admin";
 
-gold.followingIds = [verified.id, artist2.id];
-silver.followingIds = [verified.id];
+gold.followingIds = [verified.id, artist2.id, silver.id, basic.id, listener1.id];
+gold.followerIds = [silver.id, basic.id, listener2.id];
+silver.followingIds = [verified.id, basic.id, gold.id, listener3.id];
+silver.followerIds = [basic.id, gold.id, listener1.id];
+basic.followingIds = [verified.id, silver.id, gold.id];
+basic.followerIds = [silver.id, gold.id, listener3.id];
+verified.followingIds = [artist2.id, artist3.id];
+artist2.followerIds = [gold.id, verified.id, listener2.id];
+artist3.followerIds = [verified.id, listener3.id];
+artist2.followingIds = [verified.id, artist4.id];
+artist4.followerIds = [artist2.id, listener1.id];
+listener1.followingIds = [verified.id, silver.id, artist4.id];
+listener1.followerIds = [gold.id];
+listener2.followingIds = [verified.id, artist2.id, gold.id];
+listener2.followerIds = [];
+listener3.followingIds = [verified.id, artist3.id, basic.id];
+listener3.followerIds = [silver.id];
 
 const credit = (user: User) => ({ artistId: user.artistProfile!.id, username: user.username, stageName: user.artistProfile!.stageName, role: "primary" as const });
 
 export const seedTracks: Track[] = [
-  ["track-1", "release-1", "Afterglow Index", verified, 44, false, "Electronic", "A signal folds into the night\nWe keep the quiet moving"],
-  ["track-2", "release-1", "Soft Machines", verified, 52, false, "Electronic", "Soft machines breathe in time\nSilver circuits, open skies"],
-  ["track-3", "release-1", "Night Geometry", verified, 48, true, "Electronic", "Lines of light / a borrowed city\nWe draw the dark in symmetry"],
-  ["track-4", "release-1", "Window Seat", verified, 46, false, "Electronic", null],
+  ["track-1", "release-1", "Afterglow Index", verified, 50, false, "Electronic", "A signal folds into the night\nWe keep the quiet moving"],
+  ["track-2", "release-1", "Soft Machines", verified, 56, false, "Electronic", "Soft machines breathe in time\nSilver circuits, open skies"],
+  ["track-3", "release-1", "Night Geometry", verified, 43, false, "Electronic", "Lines of light / a borrowed city\nWe draw the dark in symmetry"],
+  ["track-4", "release-1", "Window Seat", verified, 49, false, "Electronic", null],
   ["track-5", "release-2", "Tidal Memory", artist2, 50, false, "Downtempo", "Let the water keep the names\nWe were never standing still"],
   ["track-6", "release-2", "Driftwood Radio", artist2, 56, false, "Downtempo", null],
   ["track-7", "release-2", "Low Tide Lanterns", artist2, 43, false, "Ambient", null],
   ["track-8", "release-3", "Solar Arcade", artist3, 49, false, "Synthwave", "Turn the horizon up\nEvery mile becomes a color"],
-  ["track-9", "release-3", "Chrome Sunrise", artist3, 47, false, "Synthwave", null],
+  ["track-9", "release-3", "Chrome Sunrise", artist3, 47, true, "Synthwave", null],
   ["track-10", "release-4", "Fern Signals", artist4, 54, false, "Indie", "Green static in the trees\nA small world waking"],
   ["track-11", "release-5", "Second Weather", verified, 51, false, "Electronic", "There is another weather\nWaiting behind the rain"],
   ["track-12", "release-6", "Future Bloom", verified, 45, false, "Electronic", "Tomorrow opens slowly\nA brighter frequency"],
+  ["track-13", "release-7", "Harbor Pulse", verified, 48, false, "Electronic", "One beat under the pier\nNo album, just the tide"],
 ].map(([id, releaseId, title, artist, duration, explicit, genre, lyrics], index) => ({
-  id: String(id), releaseId: String(releaseId), title: String(title), coverUrl: index === 6 ? null : `/media/covers/${releaseId}.svg`,
-  audioUrl: `/media/audio/sonora-${index + 1}.wav`, artists: [credit(artist as User)],
+  id: String(id), releaseId: String(releaseId), title: String(title), coverUrl: index === 6 ? null : `/media/covers/${releaseId === "release-7" ? "release-5" : releaseId}.svg`,
+  audioUrl: `/media/audio/sonora-${(index % 12) + 1}.wav`, artists: [credit(artist as User)],
   releaseTitle: index < 4 ? "Signals After Dark" : index < 7 ? "Tidal Memory" : index < 9 ? "Solar Arcade" : String(title),
   durationSeconds: Number(duration), isExplicit: Boolean(explicit), isGoldEarlyAccess: id === "track-12", publicReleaseAt: id === "track-12" ? future : "2026-05-10T00:00:00.000Z",
   genre: String(genre), lyrics: lyrics as string | null, streamCount: 24800 - index * 1270, uniqueListenerCount: 8800 - index * 391,
@@ -102,6 +157,7 @@ export const seedReleases: Release[] = [
   { id: "release-4", type: "single", title: "Fern Signals", coverUrl: "/media/covers/release-4.svg", primaryArtist: credit(artist4), publicReleaseAt: "2026-06-20T00:00:00.000Z", isEarlyAccess: false, status: "published", trackIds: ["track-10"], genre: "Indie", ownerUserId: artist4.id },
   { id: "release-5", type: "single", title: "Second Weather", coverUrl: "/media/covers/release-5.svg", primaryArtist: credit(verified), publicReleaseAt: "2026-06-28T00:00:00.000Z", isEarlyAccess: false, status: "published", trackIds: ["track-11"], genre: "Electronic", ownerUserId: verified.id },
   { id: "release-6", type: "single", title: "Future Bloom", coverUrl: "/media/covers/release-6.svg", primaryArtist: credit(verified), publicReleaseAt: future, isEarlyAccess: true, status: "scheduled", trackIds: ["track-12"], genre: "Electronic", ownerUserId: verified.id },
+  { id: "release-7", type: "single", title: "Harbor Pulse", coverUrl: "/media/covers/release-5.svg", primaryArtist: credit(verified), publicReleaseAt: "2026-07-01T00:00:00.000Z", isEarlyAccess: false, status: "published", trackIds: ["track-13"], genre: "Electronic", ownerUserId: verified.id },
 ];
 
 const plan = (tier: "silver" | "gold", months: 1 | 3 | 6 | 12, discount: number): SubscriptionPlan => {
@@ -110,8 +166,8 @@ const plan = (tier: "silver" | "gold", months: 1 | 3 | 6 | 12, discount: number)
 };
 
 export const createSeedDatabase = (): Database => ({
-  version: 1,
-  users: [basic, silver, gold, unverified, verified, artist2, artist3, artist4, support, admin],
+  version: 8,
+  users: [basic, silver, gold, unverified, verified, artist2, artist3, artist4, listener1, listener2, listener3, support, admin],
   tracks: seedTracks,
   releases: seedReleases,
   playlists: [
